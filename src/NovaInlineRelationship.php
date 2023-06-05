@@ -426,7 +426,7 @@ class NovaInlineRelationship extends Field
 
         $properties->each(function ($child, $childAttribute) use ($attribute, &$ruleArray, &$messageArray, &$attribArray) {
             if (! empty($child['rules'])) {
-                $name = "{$attribute}.*.{$childAttribute}";
+                $name = "{$attribute}.*.values.{$childAttribute}";
                 $ruleArray[$name] = $child['rules'];
                 $attribArray[$name] = $child['label'] ?? $childAttribute;
 
@@ -468,7 +468,7 @@ class NovaInlineRelationship extends Field
     protected function getFieldsFromResource($model, $attribute): Collection
     {
         $resource = ! empty($this->resourceClass)
-            ? new $this->resourceClass($model)
+            ? new $this->resourceClass($model->{$attribute}()->getRelated())
             : Nova::newResourceFromModel($model->{$attribute}()->getRelated());
 
         return collect($resource->availableFields(app(NovaRequest::class)))
